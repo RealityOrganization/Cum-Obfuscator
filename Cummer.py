@@ -53,26 +53,35 @@ class Key:
     def decrypt(e: str, key: str):
         text = Kyrie._decrypt(e, key=key)
         return Kyrie._dkyrie(text)
+    
+    def double_encrypt(e: str, key1: int, key2: int):
+        e1 = Key.encrypt(e, key=key1)
+        return Kyrie._encrypt(e1, key=key2)
+    
+    def double_decrypt(e: str, key1: int, key2: int):
+        e1 = Kyrie._decrypt(e, key=key2)
+        return Key.decrypt(e1, key=key1)
 
 def ran_int(min: int = 3, max: int = 1000000):
     return randint(min, max+1)
 
 def cummer(content: str, key: int) -> str:
     safe_key = key % 256
-    _content_ = Key.encrypt(content, key=safe_key)
-    _lines_sep_ = '/'
-    content = _lines_sep_.join(base64.a85encode(x.encode()).decode() for x in _content_)
+    second_key = (key * 2 + 15) % 256
+    _content_ = Key.double_encrypt(content, safe_key, second_key)
+    _lines_sep_ = '+'
+    content = _lines_sep_.join(base64.b64encode(x.encode()).decode() for x in _content_)
     _names_ = ["_eval", "_exec", "_byte", "_bytes", "_bit", "_bits", "_system", "_encode", "_decode", "_delete", "_exit", "_rasputin", "_cummer"]
     _names_ = ["self." + name for name in _names_]
     shuffle(_names_)
     for k in range(12):
         globals()[f'n_{str(k+1)}'] = _names_[k]
     _types_ = ("str","float","bool","int")
-    def _find(chars: str): return "+".join(f"_n7_[{list('abcdefghijklmnopqrstuvwxyz0123456789').index(c)}]" for c in chars)
-    _1_ = fr"""_n5_""",fr"""lambda _n9_:"".join(__import__('base64').a85decode(str(_n10_).encode()).decode() for _n10_ in str(_n9_).split('{_lines_sep_}'))"""
+    
+    _1_ = fr"""_n5_""",fr"""lambda _n9_:"".join(__import__('base64').b64decode(str(_n10_).encode()).decode() for _n10_ in str(_n9_).split('{_lines_sep_}'))"""
     _2_ = fr"""_n6_""",r"""lambda _n1_:str(_n4_[_n2_](f"{_n7_[4]+_n7_[-13]+_n7_[4]+_n7_[2]}(''.join(%s),{_n7_[6]+_n7_[11]+_n7_[14]+_n7_[1]+_n7_[0]+_n7_[11]+_n7_[18]}())"%list(_n1_))).encode(_n7_[20]+_n7_[19]+_n7_[5]+_n7_[34])if _n4_[_n2_]==eval else exit()"""
     _3_ = fr"""_n4_[_n2_]""",fr"""eval"""
-    _4_ = fr"""_n1_""",fr"""lambda _n1_:exit()if _n7_[15]+_n7_[17]+_n7_[8]+_n7_[13]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read() or _n7_[8]+_n7_[13]+_n7_[15]+_n7_[20]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read()else"".join(_n1_ if _n1_ not in _n7_ else _n7_[_n7_.index(_n1_)+1 if _n7_.index(_n1_)+1<len(_n7_)else 0]for _n1_ in "".join(chr(ord(t) ^ {safe_key})for t in _n5_(_n1_)))"""
+    _4_ = fr"""_n1_""",fr"""lambda _n1_:exit()if _n7_[15]+_n7_[17]+_n7_[8]+_n7_[13]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read() or _n7_[8]+_n7_[13]+_n7_[15]+_n7_[20]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read()else"".join(_n1_ if _n1_ not in _n7_ else _n7_[_n7_.index(_n1_)+1 if _n7_.index(_n1_)+1<len(_n7_)else 0]for _n1_ in "".join(chr(ord(t) ^ {safe_key})for t in "".join(chr(ord(t) ^ {second_key})for t in _n5_(_n1_))))"""
     _5_ = fr"""_n7_""",fr"""exit()if _n1_ else'abcdefghijklmnopqrstuvwxyz0123456789'"""
     _6_ = fr"""_n8_""",fr"""lambda _n12_:_n6_(_n1_(_n12_))"""
     _all_ = [_1_, _2_, _3_, _4_, _5_, _6_]
@@ -80,12 +89,14 @@ def cummer(content: str, key: int) -> str:
     _vars_content_ = ",".join(s[0] for s in _all_)
     _valors_content_ = ",".join(s[1] for s in _all_)
     _vars_ = _vars_content_ + "=" + _valors_content_
+    content_escaped = repr(content)[1:-1]
+    
     _final_content_ = fr"""class cummer():
  def __decode__(self:object,_execute:str)->exec:return(None,_n8_(_execute))[0]
  def __init__(self:object,_n1_:{choice(_types_)}=False,_n2_:{choice(_types_)}=0,*_n3_:{choice(_types_)},**_n4_:{choice(_types_)})->exec:
   {_vars_}
   return self.__decode__(_n4_[(_n7_[-1]+'_')[-1]+_n7_[18]+_n7_[15]+_n7_[0]+_n7_[17]+_n7_[10]+_n7_[11]+_n7_[4]])
-cummer(_n1_=False,_n2_=False,_sparkle='''{content}''')""".strip().replace("_n1_",n_1.removeprefix("self.")).replace("_n2_",n_2.removeprefix("self.")).replace("_n3_",n_3.removeprefix("self.")).replace("_n4_",n_4.removeprefix("self.")).replace("_n5_",n_5).replace("_n6_",n_6).replace("_n7_",n_7).replace("_n8_",n_8).replace("_n9_",n_9.removeprefix("self.")).replace("_n10_",n_10.removeprefix("self.")).replace("_n12_",n_12.removeprefix("self."))
+cummer(_n1_=False,_n2_=False,_sparkle=r'''{content_escaped}''')""".strip().replace("_n1_",n_1.removeprefix("self.")).replace("_n2_",n_2.removeprefix("self.")).replace("_n3_",n_3.removeprefix("self.")).replace("_n4_",n_4.removeprefix("self.")).replace("_n5_",n_5).replace("_n6_",n_6).replace("_n7_",n_7).replace("_n8_",n_8).replace("_n9_",n_9.removeprefix("self.")).replace("_n10_",n_10.removeprefix("self.")).replace("_n12_",n_12.removeprefix("self."))
     return _final_content_
 
 System.Clear()
@@ -135,16 +146,14 @@ def main():
     with open(file, 'w', encoding='utf-8') as f:
         f.write(content)
     print('\n')
-    print(Colorate.Diagonal(Colors.red_to_yellow, f"""Crypting with Kyrie Eleison...
-Using key {key}...
+    print(Colorate.Diagonal(Colors.red_to_yellow, f"""Double Crypting with Kyrie Eleison...
+Using primary key {key} and secondary key {(key * 2 + 15) % 256}...
 Separating lines and spaces...
-Encoding in ASCII85...
-Generating random variables names...
-Generating two random numbers...
-Creating the vars...
-Shuffling the vars...
-Adding the vars...
-Making the final content..."""))
+Applying Base64 encoding...
+Generating random variable names...
+Creating obfuscated variable definitions...
+Shuffling variable declarations...
+Finalizing secure execution wrapper..."""))
     print()
     compile(file)
     logsfolder = "logs"
@@ -164,10 +173,10 @@ Making the final content..."""))
     rename(_file, file)
     print(Colorate.Diagonal(Colors.red_to_yellow, """Creating PYC file...
 Moving the PYC file...
-Deleting '__pycache__' folder...
-Renaming PYC file..."""))
+Cleaning temporary files...
+Securing final output..."""))
     print('\n')
-    Write.Input("Built!", Colors.red_to_yellow, interval=0.005)
+    Write.Input("Built! Double encryption applied successfully.", Colors.red_to_yellow, interval=0.005)
     return exit()
 
 if __name__ == '__main__':
