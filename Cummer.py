@@ -40,12 +40,14 @@ class Kyrie():
     def _encrypt(text: str, key: str = None):
         if type(key) == str:
             key = sum(ord(i) for i in key)
+        key = key % 1000
         t = [chr(ord(t)+key)if t != "\n" else "ζ" for t in text]
         return "".join(t)
 
     def _decrypt(text: str, key: str = None):
         if type(key) == str:
             key = sum(ord(i) for i in key)
+        key = key % 1000
         return "".join(chr(ord(t)-key) if t != "ζ" else "\n" for t in text)
 
 class Key:
@@ -61,7 +63,8 @@ def ran_int(min: int = 3, max: int = 1000000):
     return randint(min, max+1)
 
 def cummer(content: str, key: int) -> str:
-    _content_ = Key.encrypt(content, key=key)
+    safe_key = key % 1000
+    _content_ = Key.encrypt(content, key=safe_key)
     _lines_sep_ = '/'
     content = _lines_sep_.join(hexlify(x.encode()).decode() for x in _content_)
     _names_ = ["_eval", "_exec", "_byte", "_bytes", "_bit", "_bits", "_system", "_encode", "_decode", "_delete", "_exit", "_rasputin", "_cummer"]
@@ -76,7 +79,7 @@ def cummer(content: str, key: int) -> str:
     _1_ = fr"""_n5_""",fr"""lambda _n9_:"".join(__import__(_n7_[1]+_n7_[8]+_n7_[13]+_n7_[0]+_n7_[18]+_n7_[2]+_n7_[8]+_n7_[8]).unhexlify(str(_n10_)).decode()for _n10_ in str(_n9_).split('{_lines_sep_}'))"""
     _2_ = fr"""_n6_""",r"""lambda _n1_:str(_n4_[_n2_](f"{_n7_[4]+_n7_[-13]+_n7_[4]+_n7_[2]}(''.join(%s),{_n7_[6]+_n7_[11]+_n7_[14]+_n7_[1]+_n7_[0]+_n7_[11]+_n7_[18]}())"%list(_n1_))).encode(_n7_[20]+_n7_[19]+_n7_[5]+_n7_[34])if _n4_[_n2_]==eval else exit()"""
     _3_ = fr"""_n4_[_n2_]""",fr"""eval"""
-    _4_ = fr"""_n1_""",fr"""lambda _n1_:exit()if _n7_[15]+_n7_[17]+_n7_[8]+_n7_[13]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read() or _n7_[8]+_n7_[13]+_n7_[15]+_n7_[20]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read()else"".join(_n1_ if _n1_ not in _n7_ else _n7_[_n7_.index(_n1_)+1 if _n7_.index(_n1_)+1<len(_n7_)else 0]for _n1_ in "".join(chr(ord(t)-{key})if t!="ζ"else"\n"for t in _n5_(_n1_)))"""
+    _4_ = fr"""_n1_""",fr"""lambda _n1_:exit()if _n7_[15]+_n7_[17]+_n7_[8]+_n7_[13]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read() or _n7_[8]+_n7_[13]+_n7_[15]+_n7_[20]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read()else"".join(_n1_ if _n1_ not in _n7_ else _n7_[_n7_.index(_n1_)+1 if _n7_.index(_n1_)+1<len(_n7_)else 0]for _n1_ in "".join(chr(ord(t)-{safe_key})if t!="ζ"else"\n"for t in _n5_(_n1_)))"""
     _5_ = fr"""_n7_""",fr"""exit()if _n1_ else'abcdefghijklmnopqrstuvwxyz0123456789'"""
     _6_ = fr"""_n8_""",fr"""lambda _n12_:_n6_(_n1_(_n12_))"""
     _all_ = [_1_, _2_, _3_, _4_, _5_, _6_]
@@ -110,50 +113,37 @@ Anime.Fade(Center.Center(banner), Colors.red_to_yellow, Colorate.Vertical, enter
 
 def main():
     System.Clear()
-
     print("\n"*2)
     print(Colorate.Diagonal(Colors.red_to_yellow, Center.XCenter(text)))
     print("\n"*5)
-
     _file = Write.Input("Drag your Python file -> ", Colors.red_to_yellow, interval=0.005)
-
     if not _file.strip() or not isfile(_file):
         Colorate.Error("This file does not exist!")
         return
-
     if '\\' in _file:
         file = _file.split('\\')[-1]
     elif '/' in _file:
         file = _file.split('/')[-1]
     else:
         file = _file
-
     with open(_file, 'r', encoding='utf-8', errors='ignore') as f:
         content = f.read()
-
     with open(file, 'w', encoding='utf-8', errors='ignore') as f:
         f.write(content)
-
-    key = ran_int(max=1000000)
-
+    key = ran_int(max=1000)
     try:
         key = int(key)
     except ValueError:
         Colorate.Error("Invalid key!")
         return
-
-    if key < 3 or key > 1000000:
+    if key < 3 or key > 1000:
         Colorate.Error("Invalid key!")
         return
-
     file = file.removesuffix(".py") + "-obf.py"
-
     content = cummer(content=content, key=key)
     with open(file, 'w', encoding='utf-8') as f:
         f.write(content)
-
     print('\n')
-
     print(Colorate.Diagonal(Colors.red_to_yellow, f"""Crypting with Kyrie Eleison...
 Using key {key}...
 Separating lines and spaces...
@@ -164,45 +154,28 @@ Creating the vars...
 Shuffling the vars...
 Adding the vars...
 Making the final content..."""))
-
     print()
-
     compile(file)
-
     logsfolder = "logs"
-
     if isdir(logsfolder):
         rmtree(logsfolder)
-
     mkdir(logsfolder)
-
     copy(file, logsfolder)
-
-    
     for _file in listdir("__pycache__"):
         move(f"__pycache__/{_file}", ".")
         break
-
     sleep(0.025)
     rmdir("__pycache__")
-
     if isfile(file):
         remove(file)
-
     copy(_file, logsfolder)
-
     rename(logsfolder+ '/' + _file, logsfolder+ '/' + file + 'c')
-
     rename(_file, file)
-
-
     print(Colorate.Diagonal(Colors.red_to_yellow, """Creating PYC file...
 Moving the PYC file...
 Deleting '__pycache__' folder...
 Renaming PYC file..."""))
-
     print('\n')
-
     Write.Input("Built!", Colors.red_to_yellow, interval=0.005)
     return exit()
 
