@@ -63,21 +63,6 @@ def ran_int(min: int = 3, max: int = 1000000):
     return randint(min, max+1)
 
 def cummer(content: str, key: int) -> str:
-    triage_check_code = '''
-import subprocess
-def TriageCheck():
-    try:
-        result = subprocess.check_output(['wmic', 'diskdrive', 'get', 'model'], text=True)
-        if "DADY HARDDISK" in result or "QEMU HARDDISK" in result:
-            print("Triage Detected")
-            exit()
-    except:
-        pass
-TriageCheck()
-
-'''
-    content = triage_check_code + content
-    
     safe_key = key % 1000
     _content_ = Key.encrypt(content, key=safe_key)
     _lines_sep_ = '/'
