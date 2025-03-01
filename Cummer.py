@@ -183,7 +183,6 @@ Finalizing secure execution wrapper..."""))
     for _file in listdir("__pycache__"):
         move(f"__pycache__/{_file}", ".")
         break
-    sleep(0.025)
     rmdir("__pycache__")
     if isfile(file):
         remove(file)
