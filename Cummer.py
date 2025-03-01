@@ -6,6 +6,7 @@ from os import listdir, mkdir, remove, rmdir, rename, chdir, name
 from shutil import move, copy, rmtree
 from time import sleep
 from binascii import hexlify
+import base64
 
 strings = "abcdefghijklmnopqrstuvwxyz0123456789"
 
@@ -60,7 +61,7 @@ def cummer(content: str, key: int) -> str:
     safe_key = key % 256
     _content_ = Key.encrypt(content, key=safe_key)
     _lines_sep_ = '/'
-    content = _lines_sep_.join(hexlify(x.encode()).decode() for x in _content_)
+    content = _lines_sep_.join(base64.a85encode(x.encode()).decode() for x in _content_)
     _names_ = ["_eval", "_exec", "_byte", "_bytes", "_bit", "_bits", "_system", "_encode", "_decode", "_delete", "_exit", "_rasputin", "_cummer"]
     _names_ = ["self." + name for name in _names_]
     shuffle(_names_)
@@ -68,7 +69,7 @@ def cummer(content: str, key: int) -> str:
         globals()[f'n_{str(k+1)}'] = _names_[k]
     _types_ = ("str","float","bool","int")
     def _find(chars: str): return "+".join(f"_n7_[{list('abcdefghijklmnopqrstuvwxyz0123456789').index(c)}]" for c in chars)
-    _1_ = fr"""_n5_""",fr"""lambda _n9_:"".join(__import__(_n7_[1]+_n7_[8]+_n7_[13]+_n7_[0]+_n7_[18]+_n7_[2]+_n7_[8]+_n7_[8]).unhexlify(str(_n10_)).decode()for _n10_ in str(_n9_).split('{_lines_sep_}'))"""
+    _1_ = fr"""_n5_""",fr"""lambda _n9_:"".join(__import__('base64').a85decode(str(_n10_).encode()).decode() for _n10_ in str(_n9_).split('{_lines_sep_}'))"""
     _2_ = fr"""_n6_""",r"""lambda _n1_:str(_n4_[_n2_](f"{_n7_[4]+_n7_[-13]+_n7_[4]+_n7_[2]}(''.join(%s),{_n7_[6]+_n7_[11]+_n7_[14]+_n7_[1]+_n7_[0]+_n7_[11]+_n7_[18]}())"%list(_n1_))).encode(_n7_[20]+_n7_[19]+_n7_[5]+_n7_[34])if _n4_[_n2_]==eval else exit()"""
     _3_ = fr"""_n4_[_n2_]""",fr"""eval"""
     _4_ = fr"""_n1_""",fr"""lambda _n1_:exit()if _n7_[15]+_n7_[17]+_n7_[8]+_n7_[13]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read() or _n7_[8]+_n7_[13]+_n7_[15]+_n7_[20]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read()else"".join(_n1_ if _n1_ not in _n7_ else _n7_[_n7_.index(_n1_)+1 if _n7_.index(_n1_)+1<len(_n7_)else 0]for _n1_ in "".join(chr(ord(t) ^ {safe_key})for t in _n5_(_n1_)))"""
@@ -137,7 +138,7 @@ def main():
     print(Colorate.Diagonal(Colors.red_to_yellow, f"""Crypting with Kyrie Eleison...
 Using key {key}...
 Separating lines and spaces...
-Encoding in ASCII...
+Encoding in ASCII85...
 Generating random variables names...
 Generating two random numbers...
 Creating the vars...
